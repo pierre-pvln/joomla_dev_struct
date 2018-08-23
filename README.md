@@ -14,13 +14,3 @@ extensionname\00_dev_code       folder with the code for the Joomla! extension,
              \08_sources        folder with relevant information links and inspiration
                                 used to create the extension
 ```
-
-The downloadable extension .zip file is available at:
-```
- download.pvln.nl/joomla/<extensiontype>/<extensionname>/
-```
-
-The downloadable extension update .xml file is available at:
-```
- update.pvln.nl/joomla/<extensiontype>/<extensionname>/
-```
