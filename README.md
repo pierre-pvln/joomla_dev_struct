@@ -15,15 +15,15 @@ extensionname\00_dev_code       folder with the code for the Joomla! extension,
 ```
 The fooling scripts are included
 ```
-00_create_folder_structure.cmd  Creates the above folderstructure
+00_create_folder_structure.cmd  Creates the above folderstructure.
 ```
 ``` 
-01_add_default_git.cmd          Adds default joomla! development scripts for extensions,<br>
-                                and switches the 02_build_process from master to a new branch<br>
+01_add_default_git.cmd          Adds default joomla! development scripts for extensions in 02_build_process,
+                                and switches the 02_build_process from master to a new branch.
 ```
 ``` 
-02_add_default_files.cmd        Adds some additional files<br>
+02_add_default_files.cmd        Adds some additional files.
 ```
 ``` 
-11_merge_02_build_process.cmd   Merges the changes in the 02_build_process back to master<br>
+11_merge_02_build_process.cmd   Merges the changes in the 02_build_process back to master.
 ```
