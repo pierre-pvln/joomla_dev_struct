@@ -43,5 +43,5 @@ cd 04_settings
 curl -LJO https://raw.githubusercontent.com/pierre-pvln/joomla_dev_struct/master/04_settings/00_name.cmd
 curl -LJO https://raw.githubusercontent.com/pierre-pvln/joomla_dev_struct/master/04_settings/02_version.cmd
 curl -LJO https://raw.githubusercontent.com/pierre-pvln/joomla_dev_struct/master/04_settings/04_folders.cmd
-
+curl -LJO https://raw.githubusercontent.com/pierre-pvln/joomla_dev_struct/master/04_settings/files_to_exclude_in_zip.txt
 ```
