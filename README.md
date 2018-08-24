@@ -34,5 +34,8 @@ The following scripts are included:
 - Goto into this new folder.
 - Run the following commands. (Curl should be available on your system)
 ```
-curl https://raw.githubusercontent.com/pierre-pvln/joomla_dev_struct/master/00_create_folder_structure.cmd
+curl -LJO https://raw.githubusercontent.com/pierre-pvln/joomla_dev_struct/master/00_create_folder_structure.cmd
+curl -LJO https://raw.githubusercontent.com/pierre-pvln/joomla_dev_struct/master/01_add_default_git.cmd
+curl -LJO https://raw.githubusercontent.com/pierre-pvln/joomla_dev_struct/master/02_add_default_files.cmd
+curl -LJO https://raw.githubusercontent.com/pierre-pvln/joomla_dev_struct/master/11_merge_02_build_process.cmd
 ```
