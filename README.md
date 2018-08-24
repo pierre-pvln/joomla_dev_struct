@@ -13,6 +13,7 @@ extensionname\00_dev_code       folder with the code for the Joomla! extension,
              \08_sources        folder with relevant information links and inspiration
                                 used to create the extension
 ```
+The fooling scripts are included
 ```
 00_create_folder_structure.cmd  Creates the above folderstructure
 ```
@@ -21,7 +22,7 @@ extensionname\00_dev_code       folder with the code for the Joomla! extension,
                                 and switches the 02_build_process from master to a new branch<br>
 ```
 ``` 
-02_add_default_files.cmd 	      Adds some additional files<br>
+02_add_default_files.cmd        Adds some additional files<br>
 ```
 ``` 
 11_merge_02_build_process.cmd   Merges the changes in the 02_build_process back to master<br>
