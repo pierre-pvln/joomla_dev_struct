@@ -29,3 +29,6 @@ The following scripts are included:
 ``` 
 11_merge_02_build_process.cmd   Merges the changes in the 02_build_process folder back to master.
 ```
+# Getting the scripts
+- Create the folder in which the extension is developed. Foldername should be the name of the extension.
+- Goto into this new folder.
