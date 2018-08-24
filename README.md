@@ -32,3 +32,7 @@ The following scripts are included:
 # Getting the scripts
 - Create the folder in which the extension is developed. Foldername should be the name of the extension.
 - Goto into this new folder.
+- Run the following commands. (Curl should be available on your system)
+```
+curl https://raw.githubusercontent.com/pierre-pvln/joomla_dev_struct/master/00_create_folder_structure.cmd
+```
