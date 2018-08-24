@@ -38,4 +38,9 @@ curl -LJO https://raw.githubusercontent.com/pierre-pvln/joomla_dev_struct/master
 curl -LJO https://raw.githubusercontent.com/pierre-pvln/joomla_dev_struct/master/01_add_default_git.cmd
 curl -LJO https://raw.githubusercontent.com/pierre-pvln/joomla_dev_struct/master/02_add_default_files.cmd
 curl -LJO https://raw.githubusercontent.com/pierre-pvln/joomla_dev_struct/master/11_merge_02_build_process.cmd
+
+curl -LJO https://raw.githubusercontent.com/pierre-pvln/joomla_dev_struct/master/04_settings/00_name.cmd
+curl -LJO https://raw.githubusercontent.com/pierre-pvln/joomla_dev_struct/master/04_settings/02_version.cmd
+curl -LJO https://raw.githubusercontent.com/pierre-pvln/joomla_dev_struct/master/04_settings/04_folders.cmd
+
 ```
