@@ -1,0 +1,15 @@
+##
+# Ingore the following files for Git
+##
+
+##
+# JSON files
+##
+#
+# Used to create the githeb repository
+data.json
+
+##
+# secret files
+##
+_secrets/*
