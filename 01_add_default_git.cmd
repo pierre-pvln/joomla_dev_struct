@@ -24,7 +24,11 @@ SET cmd_dir=%~dp0
 ::
 for %%I in (.) do set extensionFolderName=%%~nxI
 
-
+:: ==================================
+::
+:: FOLDER: 02_build_process
+::
+:: ==================================
 CD "%cmd_dir%"
 CD 02_build_process
 
@@ -62,7 +66,49 @@ IF %ERRORLEVEL% NEQ 0 (
 )
 
 :: display current branch
+ECHO Currently using the following branch for 02_build_process:
 git rev-parse --abbrev-ref HEAD
+
+:: ==================================
+::
+:: FOLDER: 00_dev_code
+::
+:: ==================================
+CD "%cmd_dir%"
+CD 00_dev_code
+
+:: check if folder is under git control
+::
+git status
+IF %ERRORLEVEL% NEQ 0 (
+:: if not initialize folder 
+   git init
+   git config --global user.name Pierre Veelen
+   git config --global user.email pierre@pvln.nl
+   git config --global color.ui auto
+)
+
+:: Get the files from github master branch. 
+:: These contain the latest production release
+git pull origin master
+IF %ERRORLEVEL% NEQ 0 (
+   :: origin not set
+   :: repository pierre-pvln/%extensionFolderName% should hold the files
+   ::
+   git remote add origin git@github.com:pierre-pvln/%extensionFolderName%.git
+   :: origin initialized
+   :: and now get files
+   git pull origin master
+   IF %ERRORLEVEL% NEQ 0 (
+   :: repository doesn't exist.
+   :: create it on github.
+   :: switch remote URLs from SSH to HTTPS
+      git remote set-url origin https://github.com/pierre-pvln/%extensionFolderName%.git
+	  ECHO {"name":"%extensionFolderName%", "description":"This is the repository for the %extensionFolderName% project"}>data.json
+	  curl -u pierre-pvln:<<PASSWORD>> https://api.github.com/user/repos -d @data.json -X POST
+      git remote set-url origin git@github.com:pierre-pvln/%extensionFolderName%.git
+   )
+) 
 
 GOTO CLEAN_EXIT
 
