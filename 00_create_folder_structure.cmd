@@ -29,4 +29,4 @@ IF NOT EXIST @_started_*      (md @_started_%date:~9,4%_%date:~6,2%_%date:~3,2%_
 
 :: Wait some time and exit the script
 ::
-timeout /T 10
+timeout /T 5
