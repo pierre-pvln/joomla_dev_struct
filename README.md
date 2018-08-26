@@ -32,7 +32,7 @@ The following scripts are included:
 # Getting the scripts
 - Create the folder in which the extension is developed. Foldername should be the name of the extension.
 - Goto into this new folder.
-- Run the following commands. (Curl should be available on your system)
+- Run the following commands. (<a href="https://curl.haxx.se/download.html" target="_blank">curl</a> should be present on your system)
 ```
 curl -LJO https://raw.githubusercontent.com/pierre-pvln/joomla_dev_struct/master/00_create_folder_structure.cmd
 curl -LJO https://raw.githubusercontent.com/pierre-pvln/joomla_dev_struct/master/01_add_default_git.cmd
@@ -44,5 +44,6 @@ curl -LJO https://raw.githubusercontent.com/pierre-pvln/joomla_dev_struct/master
 curl -LJO https://raw.githubusercontent.com/pierre-pvln/joomla_dev_struct/master/04_settings/02_version.cmd
 curl -LJO https://raw.githubusercontent.com/pierre-pvln/joomla_dev_struct/master/04_settings/04_folders.cmd
 curl -LJO https://raw.githubusercontent.com/pierre-pvln/joomla_dev_struct/master/04_settings/files_to_exclude_in_zip.txt
+cd ..
 
 ```
