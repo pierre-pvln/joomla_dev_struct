@@ -18,7 +18,8 @@
 :: Author:   pierre.veelen@pvln.nl
 :: Revision: 2018 08 21 - initial version
 ::           2018 08 26 - additional git commands added to be able to reach the defined end-state
-::                        independent of the state of the folders when the script is run.   
+::                        independent of the state of the folders when the script is run.\
+::           2018 08 29 - git settings added   
 
 @ECHO off
 SETLOCAL ENABLEEXTENSIONS
@@ -36,8 +37,19 @@ SET drive=%~d0
 :: Setting the directory and drive of this commandfile
 SET cmd_dir=%~dp0
 
+:: STATIC VARIABLES
+:: ================
+cd ..\..\..\_secrets
+IF EXIST git_settings.cmd (
+   CALL git_settings.cmd
+) ELSE (
+   SET ERROR_MESSAGE=File with git settings doesn't exist
+   GOTO ERROR_EXIT
+)
+cd "%cmd_dir%"
+
 :: ==================================
-::  DETERMIN EXTENSION NAME
+::  DETERMINE EXTENSION NAME
 :: ==================================
 
 :: get the name of the folder in an environment variable
@@ -62,6 +74,8 @@ IF %VERBOSE%==YES ECHO ... Extension name is: %extensionFolderName%
 :: ==================================
 ::  FOLDER: 02_build_process
 :: ==================================
+SET currentGitBranch=NONE
+
 CD "%cmd_dir%"
 CD 02_build_process
 
@@ -72,87 +86,150 @@ IF %VERBOSE%==YES ECHO ... Currently running in %CD%
 IF %VERBOSE%==YES ECHO ... Check if folder is under git control
 git status
 IF %ERRORLEVEL% NEQ 0 (
-:: if not initialize folder 
+:: initialize git in folder and start tracking
    IF %VERBOSE%==YES ECHO ... This folder is not under git control: Initializing git
    git init
    git config --global user.name Pierre Veelen
    git config --global user.email pierre@pvln.nl
    git config --global color.ui auto
-   IF %VERBOSE%==YES ECHO ... Adding remote repository
-   git remote add origin git@github.com:pierre-pvln/joomla-build.git
+   
+   IF %VERBOSE%==YES ECHO ... Adding remote repository %git_username%/joomla-build
+   git remote add origin git@github.com:%git_username%/joomla-build.git
+   
+   IF %VERBOSE%==YES ECHO ... Pulling remote files from git master branch
+   git pull origin master
 )
 
-:: Get the files from github master branch. 
-:: These contain the latest production release
-IF %VERBOSE%==YES ECHO Pulling remote files from git master branch ...
-git pull origin master
-IF %ERRORLEVEL% NEQ 0 (
-   IF %VERBOSE%==YES ECHO Error pulling remote files from git ...
-   SET ERROR_MESSAGE=Error pulling files from git@github.com:pierre-pvln/joomla-build.git
-   GOTO ERROR_EXIT
-) 
+IF %VERBOSE%==YES ECHO ... Determine current local branch name
+:: Get current branch in environment variable
+:: https://ss64.com/nt/for_cmd.html
+::
+FOR /F %%G IN ('git rev-parse --abbrev-ref HEAD') DO SET currentGitBranch=%%G
+
+:: remove spaces in name
+:: http://www.dostips.com/DtTipsStringManipulation.php
+:: 
+SET currentGitBranch=%currentGitBranch: =%
+   
+:: show the result 
+IF %VERBOSE%==YES ECHO ... Current branch: %currentGitBranch%
+
+:: current git branch is determined 
 
 :: The assumption is that during the development of the extension the build process is updated also.
-:: Therefore we create another branch for the changes in the build process of the extension
-:: So we can merge them to production (master branch) at a later stage
-git checkout -b "updates-from-%extensionFolderName%" master
-IF %ERRORLEVEL% NEQ 0 (
-   ::branch already existed so only go to branch and not also create it from master
+:: Therefore we create another local branch for the changes in the build process of the extension
+:: So we can merge them to production (master branch) and/or development (develop branch) at a later stage
+IF %currentGitBranch%==master (
+   IF %VERBOSE%==YES ECHO ... Trying to create updates-from-%extensionFolderName% branch
+   git branch "updates-from-%extensionFolderName%" master
    git checkout "updates-from-%extensionFolderName%"
 )
 
 :: display current branch
-ECHO Currently using the following branch for 02_build_process:
-git rev-parse --abbrev-ref HEAD
-
+IF %VERBOSE%==YES (
+   ECHO Currently using the following branch for 02_build_process:
+   git rev-parse --abbrev-ref HEAD
+)
 
 :: ==================================
 :: FOLDER: 00_dev_code
 :: ==================================
+SET currentGitBranch=NONE
+SET createdGitRepo=NO
+
 CD "%cmd_dir%"
 CD 00_dev_code
-IF %VERBOSE%==YES ECHO Currently running in %CD%
+
+IF %VERBOSE%==YES ECHO ... Currently running in %CD%
 
 :: check if folder is under git control
 ::
-IF %VERBOSE%==YES ECHO Check if folder is under git control ...
+IF %VERBOSE%==YES ECHO ... Check if folder is under git control
 git status
 IF %ERRORLEVEL% NEQ 0 (
-:: if not initialize folder
-  IF %VERBOSE%==YES ECHO ... This folder is not under git control: Initializing git
+:: initialize git in folder and start tracking
+   IF %VERBOSE%==YES ECHO ... This folder is not under git control: Initializing git
    git init
    git config --global user.name Pierre Veelen
    git config --global user.email pierre@pvln.nl
    git config --global color.ui auto
-   IF %VERBOSE%==YES ECHO Adding remote repository ...
-   git remote add origin git@github.com:pierre-pvln/%extensionFolderName%.git
+   
+   IF %VERBOSE%==YES ECHO ... Adding remote repository %git_username%/%extensionFolderName%
+   git remote add origin git@github.com:%git_username%/%extensionFolderName%.git
 )
 
-Pause
-
-:: Get the files from github master branch. 
-:: These contain the latest production release
+IF %VERBOSE%==YES ECHO ... Pulling remote files from git master branch
 git pull origin master
 IF %ERRORLEVEL% NEQ 0 (
-   :: origin not set
-   :: repository pierre-pvln/%extensionFolderName% should hold the files
-   ::
-   IF %VERBOSE%==YES ECHO Adding remote repository ...
-   git remote add origin git@github.com:pierre-pvln/%extensionFolderName%.git
-   :: origin initialized
-   :: and now get files
-   git pull origin master
-   IF %ERRORLEVEL% NEQ 0 (
-   :: repository doesn't exist.
-   :: create it on github.
-   :: switch remote URLs from SSH to HTTPS
-      IF %VERBOSE%==YES ECHO Repository doens't exist on github so creating it ...
-      git remote set-url origin https://github.com/pierre-pvln/%extensionFolderName%.git
-	  ECHO {"name":"%extensionFolderName%", "description":"This is the repository for the %extensionFolderName% project"}>data.json
-	  curl -u pierre-pvln:<<PASSWORD>> https://api.github.com/user/repos -d @data.json -X POST
-      git remote set-url origin git@github.com:pierre-pvln/%extensionFolderName%.git
-   )
-) 
+   IF %VERBOSE%==YES ECHO ... Repository doens't exist on github so creating it ...
+   git remote set-url origin https://github.com/%git_username%/%extensionFolderName%.git
+   ECHO {"name":"%extensionFolderName%", "description":"This is the repository for the %extensionFolderName% project"}>data.json
+   curl -u %git_username%:%git_password% https://api.github.com/user/repos -d @data.json -X POST
+   DEL data.json
+   git remote set-url origin git@github.com:%git_username%/%extensionFolderName%.git
+   SET createdGitRepo=YES
+)
+
+IF NOT EXIST "README.md" (
+   ECHO # README file for the %extensionFolderName% Joomla! extension >README.md
+)
+
+IF NOT EXIST "CHANGELOG.md" (
+ECHO --- 
+ECHO #  Changelog for the %extensionFolderName% Joomla! code:
+ECHO ---
+ECHO ^<h4^>v.0.0.1 %date:~9,4%-%date:~6,2%-%date:~3,2%^</h4^>
+ECHO ^<ul^>
+ECHO ^<li^>Initial version^</li^>
+ECHO ^</ul^>
+) >CHANGELOG.md
+
+IF %createdGitRepo%==YES (
+   git add .
+   git commit -m "First master branch commit"
+   git push -u origin master
+   
+   git branch develop master
+   git checkout develop
+   git commit -m "First develop branch commit"
+   git push -u origin develop
+   
+   git checkout master
+)
+
+IF %VERBOSE%==YES ECHO ... Pulling remote files from git master branch again
+git pull origin master
+
+IF %VERBOSE%==YES ECHO ... Determine current local branch name
+:: Get current branch in environment variable
+:: https://ss64.com/nt/for_cmd.html
+::
+FOR /F %%G IN ('git rev-parse --abbrev-ref HEAD') DO SET currentGitBranch=%%G
+
+:: remove spaces in name
+:: http://www.dostips.com/DtTipsStringManipulation.php
+:: 
+SET currentGitBranch=%currentGitBranch: =%
+   
+:: show the result 
+IF %VERBOSE%==YES ECHO ... Current branch: %currentGitBranch%
+
+:: current git branch is determined 
+
+:: The assumption is that during the development of the extension the build process is updated also.
+:: Therefore we create another local branch for the changes in the build process of the extension
+:: So we can merge them to production (master branch) and/or development (develop branch) at a later stage
+IF %currentGitBranch%==master (
+   IF %VERBOSE%==YES ECHO ... Trying to create updates-for-%extensionFolderName% branch
+   git branch "updates-for-%extensionFolderName%" master
+   git checkout "updates-for-%extensionFolderName%"
+)
+
+:: display current branch
+IF %VERBOSE%==YES (
+   ECHO Currently using the following branch for 00_dev_code:
+   git rev-parse --abbrev-ref HEAD
+)
 
 GOTO CLEAN_EXIT
 
@@ -162,6 +239,6 @@ ECHO *******************
 ECHO Error: %ERROR_MESSAGE%
 ECHO *******************
 
-   
-:CLEAN_EXIT   
-timeout /T 10
+
+:CLEAN_EXIT
+Timeout /T 10
