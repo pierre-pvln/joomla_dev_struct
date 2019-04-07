@@ -3,7 +3,7 @@
 ::           and create master and develop branch for new project.
 :: 
 ::           The end-state of this script:
-::           - folder 02_build_process:
+::           - folder 01_building:
 ::             - is under git control,
 ::             - was initialized with the production release for github.
 ::             - is then given an own git branch name
@@ -15,12 +15,13 @@
 ::             - github repository contains a master and develop branch
 ::             - local is connected to github develop branch for this repository
 ::
-:: Author:   pierre.veelen@pvln.nl
+:: Author:   pierre@pvln.nl
 :: Revision: 2018 08 21 - initial version
 ::           2018 08 26 - additional git commands added to be able to reach the defined end-state
 ::                        independent of the state of the folders when the script is run.\
 ::           2018 08 29 - git settings added   
-
+::           2019 04 07 - foldersturcture updated           
+::
 @ECHO off
 SETLOCAL ENABLEEXTENSIONS
 
@@ -77,7 +78,7 @@ IF %VERBOSE%==YES ECHO ... Extension name is: %extensionFolderName%
 SET currentGitBranch=NONE
 
 CD "%cmd_dir%"
-CD 02_build_process
+CD 01_building
 
 IF %VERBOSE%==YES ECHO ... Currently running in %CD%
 
