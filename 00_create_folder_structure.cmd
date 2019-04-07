@@ -1,6 +1,6 @@
 :: Name:     00_create_folder_structure.cmd
 :: Purpose:  Create the baseline folder structure for development projects in current directory
-:: Author:   pierre.veelen@pvln.nl
+:: Author:   pierre@pvln.nl
 :: Revision: 2018 07 31 - initial version
 ::           2018 12 24 - added some folders
 ::
